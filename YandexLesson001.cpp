@@ -19,7 +19,7 @@ int main ()
 	int Number2;
 	std::cin >> Number1;
 	std::cin >> Number2;
-	std::cout << "Summ Number1 and Number2 is - " << Number1 + Number2 << "\n";
+	std::cout << Number1 + Number2 << "\n";
 	   
 	return 0;
 }
