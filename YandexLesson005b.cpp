@@ -70,6 +70,7 @@ bool PointSort ( const std::pair<int, int> &ValueOne, const std::pair<int, int> 
 
 int main ()
 {
+	
     int NumbersOfPoint;
     std::cin >> NumbersOfPoint;
 	std::vector<std::pair<int, int>>PointVector(NumbersOfPoint);
