@@ -138,8 +138,8 @@ int main()
      std::vector<int>MyString3 { 2, 6, 17, 43, 55, 65, 26, 78, 79, 81, 3, 4, 15, 96, 47, 70, 1, 15, 14, 1, 19, 1, 1, 1, 26 };
      std::vector<int>MyString4;
      MyString4.resize(32);
-     auto InteEnd = SetDifference (MyString2.begin(), MyString2.end(), MyString3.begin(), MyString3.end(), MyString4.begin());
-     for ( auto IterF = MyString4.begin(); IterF != InteEnd; IterF++)
+     auto InterEnd = SetDifference (MyString2.begin(), MyString2.end(), MyString3.begin(), MyString3.end(), MyString4.begin());
+     for ( auto IterF = MyString4.begin(); IterF != InterEnd; IterF++)
     {
     	std::cout << *IterF << " ";
     }
