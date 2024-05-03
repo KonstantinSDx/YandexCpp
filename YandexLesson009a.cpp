@@ -34,7 +34,7 @@ int main()
 		{
 			ValueMultiset.clear();
 		}
-		else if (Command == "\n") CyCleON = false;
+		else if (Command == "\r\n") CyCleON = false;
 	}
 
 
