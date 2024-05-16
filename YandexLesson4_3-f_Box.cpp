@@ -1,40 +1,43 @@
 #include <iostream>
 #include <list>
 #include <time.h>
-
-
-struct box
-{
-	int Wi;
-	int Vi;
-	int Serial;
-	long long AddDate;
-};
+#include <algorithm>
 		
-bool SortFunction(const box &b1, const box &b2)
-{
-	if  (b1.Wi > b2.Wi) return true;
-    if ( (b1.Wi == b2.Wi) && ( (b1.AddDate<b2.AddDate) || (b1.AddDate==b2.AddDate) ))  return true;  
-	else return false;
-}
 
 class Stock
 {
+	
+		
 	private:
+		struct box
+		{
+			int Wi;
+			int Vi;
+			int Serial;
+			long long AddDate;
+		};
 		int SerialNumber = 0;
-		std::list<box> BoxArray;
+		int Max_Wi = 0;
+		int Max_Vi = 0;
+		std::list<box>BoxArray;
 	
 	public:	
+		friend bool SortFunction(const box &b1, const box &b2);
 	    void Add(int w, int v)
 	    {
 	    	box boxX;
 			boxX.Wi = w;
 			boxX.Vi = v;
+			if ( Max_Wi < w ) Max_Wi = w ;
+			if ( Max_Vi < v ) Max_Vi = v ;
 			boxX.Serial = SerialNumber+1;
 			boxX.AddDate = time(NULL);
 			BoxArray.push_back(boxX);
 			SerialNumber++;
-			if (BoxArray.size() >=2 )  BoxArray.sort(SortFunction);          
+//			if (BoxArray.size() >=2 )  BoxArray.sort(SortFunction); 
+			if (BoxArray.size() >=2 )  BoxArray.sort([](const box &b1, const box &b2) {	if  (b1.Wi > b2.Wi) return true;
+    																					if ( (b1.Wi == b2.Wi) && ( (b1.AddDate<b2.AddDate) || (b1.AddDate==b2.AddDate) ))  return true;  
+																						else return false;} );         
 		}
 		
 // ==================Trassing Code=================================================		
@@ -55,20 +58,81 @@ class Stock
 // ===================Trassing Code=================================================
 
 	
-    	int GetByW(int min_w)
+    	int GetByW(int min_w) 
 		{
-			return 0;
+			int TempValue(0);
+			auto IterMinimunWeight = std::find_if( BoxArray.begin(), BoxArray.end(), [min_w](const box &a)->bool {  if (a.Wi == min_w) return true; 
+																													else return false; } );
+			std::cout << "Serial is - " << (*IterMinimunWeight).Serial << std::endl;
+			TempValue = (*IterMinimunWeight).Serial;
+			BoxArray.erase(IterMinimunWeight);
+			return TempValue; 
 		}
 	
 		int GetByV(int min_v)
 		{
-			return 0;
+			box &TempBox = BoxArray.front();
+			int Temp_Vi = TempBox.Vi; 
+			int Temp_AddDate = TempBox.AddDate;
+			int Temp_Serial = TempBox.Serial;
+			for (auto IterMinimunWeight = BoxArray.begin(); IterMinimunWeight != BoxArray.end(); IterMinimunWeight++)
+			{
+				if ( (*IterMinimunWeight).Vi < min_v )   continue;
+				if (  ((*IterMinimunWeight).Vi != min_v ) && ( Temp_Vi == min_v ) ) continue;
+				if (  ((*IterMinimunWeight).Vi == min_v ) && ( Temp_Vi != min_v ) )
+				{
+					Temp_Vi = (*IterMinimunWeight).Vi; 
+					Temp_AddDate = (*IterMinimunWeight).AddDate;
+					Temp_Serial = (*IterMinimunWeight).Serial;
+					continue;
+				}
+				
+				if (  ((*IterMinimunWeight).Vi == min_v ) && ( Temp_Vi == min_v ) )
+				{
+					if ( (*IterMinimunWeight).AddDate < Temp_AddDate )
+					{
+						Temp_AddDate = (*IterMinimunWeight).AddDate;
+						Temp_Serial = (*IterMinimunWeight).Serial;
+						continue;
+					}
+					else continue;
+				}
+				
+				if (  ((*IterMinimunWeight).Vi > min_v ) && ( Temp_Vi != min_v ) )
+				{
+					if ( (*IterMinimunWeight).Vi < Temp_Vi )
+					{
+						Temp_Vi = (*IterMinimunWeight).Vi;
+						Temp_AddDate = (*IterMinimunWeight).AddDate;
+						Temp_Serial = (*IterMinimunWeight).Serial;
+						continue;
+					}
+					else continue;
+				}
+				
+			}
+
+/*			auto IterMinimunWeight = std::find_if( BoxArray.begin(), BoxArray.end(), [min_v, Temp_Vi, Temp_AddDate](const box &a)->bool {  if (a.Vi == min_v) return true; 
+																																			 else return false; } );
+			std::cout << "Serial is - " << (*IterMinimunWeight).Serial << std::endl;
+			TempValue = (*IterMinimunWeight).Serial;
+			BoxArray.erase(IterMinimunWeight);
+*/
+			std::cout << "Serial is - " << Temp_Serial << std::endl;
+			return Temp_Serial; 
 		}
 	
 	
 };
 
-
+/*
+bool SortFunction(const Stock::box &b1, const Stock::box &b2)
+{
+	if  (b1.Wi > b2.Wi) return true;
+    if ( (b1.Wi == b2.Wi) && ( (b1.AddDate<b2.AddDate) || (b1.AddDate==b2.AddDate) ))  return true;  
+	else return false;
+}
+*/		
 
 
 int main ()
@@ -123,5 +187,29 @@ int main ()
 	Stx.Add (2, 2);
 	Stx.PrintList();
 	
+	Stx.GetByV(2);
+		std::cout << std::endl;
+	Stx.GetByV(11);
+		std::cout << std::endl;
+	Stx.GetByV(5);
+		std::cout << std::endl;
+	Stx.GetByV(9);
+		std::cout << std::endl;
+	Stx.GetByV(6);
+	
+	std::cout << std::endl;
+	Stx.GetByW(6);
+	std::cout << std::endl;
+	Stx.GetByW(7);
+	std::cout << std::endl;
+	Stx.GetByW(8);
+	std::cout << std::endl;
+	Stx.GetByW(12);
+	std::cout << std::endl;
+	Stx.GetByW(6);
+	std::cout << std::endl;
+	Stx.GetByW(5);
+	std::cout << std::endl;
+	Stx.PrintList();	
 	
 }
