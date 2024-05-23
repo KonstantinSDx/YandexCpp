@@ -17,8 +17,6 @@ class Stock
 			long long AddDate;
 		};
 		int SerialNumber = 0;
-		int Max_Wi = 0;
-		int Max_Vi = 0;
 		std::list<box>BoxArray;
 	
 	public:	
@@ -28,15 +26,13 @@ class Stock
 	    	box boxX;
 			boxX.Wi = w;
 			boxX.Vi = v;
-			if ( Max_Wi < w ) Max_Wi = w ;
-			if ( Max_Vi < v ) Max_Vi = v ;
 			boxX.Serial = SerialNumber+1;
 			boxX.AddDate = time(NULL);
 			BoxArray.push_back(boxX);
 			SerialNumber++;
 //			if (BoxArray.size() >=2 )  BoxArray.sort(SortFunction); 
-			if (BoxArray.size() >=2 )  BoxArray.sort([](const box &b1, const box &b2) {	if  (b1.Wi > b2.Wi) return true;
-    																					if ( (b1.Wi == b2.Wi) && ( (b1.AddDate<b2.AddDate) || (b1.AddDate==b2.AddDate) ))  return true;  
+			if (BoxArray.size() >=2 )  BoxArray.sort([](const box &b1, const box &b2) {	if  (b1.Wi < b2.Wi) return true;
+    																					if ( (b1.Wi == b2.Wi) && ( (b1.AddDate>b2.AddDate) || (b1.AddDate==b2.AddDate) ))  return true;  
 																						else return false;} );         
 		}
 		
@@ -60,17 +56,25 @@ class Stock
 	
     	int GetByW(int min_w) 
 		{
+			if ( BoxArray.size()==0 ) return -1;
 			int TempValue(0);
 			auto IterMinimunWeight = std::find_if( BoxArray.begin(), BoxArray.end(), [min_w](const box &a)->bool {  if (a.Wi == min_w) return true; 
 																													else return false; } );
-			std::cout << "Serial is - " << (*IterMinimunWeight).Serial << std::endl;
+			if 	( IterMinimunWeight == BoxArray.end() )	
+			{
+				IterMinimunWeight = std::find_if( BoxArray.begin(), BoxArray.end(), [min_w](const box &a)->bool {  if (a.Wi > min_w) return true; 
+																													else return false; } );
+			}
+		
 			TempValue = (*IterMinimunWeight).Serial;
+			std::cout << "Value min_w - " << min_w << ".  Serial is - " << TempValue << std::endl;
 			BoxArray.erase(IterMinimunWeight);
 			return TempValue; 
 		}
 	
 		int GetByV(int min_v)
 		{
+			if ( BoxArray.size()==0 ) return -1;
 			box &TempBox = BoxArray.front();
 			int Temp_Vi = TempBox.Vi; 
 			int Temp_AddDate = TempBox.AddDate;
@@ -200,6 +204,8 @@ int main ()
 	std::cout << std::endl;
 	Stx.GetByW(6);
 	std::cout << std::endl;
+	Stx.GetByW(14);
+	std::cout << std::endl;
 	Stx.GetByW(7);
 	std::cout << std::endl;
 	Stx.GetByW(8);
@@ -209,6 +215,8 @@ int main ()
 	Stx.GetByW(6);
 	std::cout << std::endl;
 	Stx.GetByW(5);
+	std::cout << std::endl;
+	Stx.GetByW(11);
 	std::cout << std::endl;
 	Stx.PrintList();	
 	
